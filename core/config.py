@@ -5,12 +5,13 @@ import os
 from typing import Dict, Optional
 from dataclasses import dataclass
 import json
+from dotenv import load_dotenv
 
 
 @dataclass
 class LLMConfig:
     """Configuration for LLM endpoint"""
-    provider: str  # 'openai', 'anthropic', 'custom'
+    provider: str  # 'openai', 'anthropic', 'mistral', 'custom'
     api_key: Optional[str] = None
     model: str = "gpt-3.5-turbo"
     base_url: Optional[str] = None
@@ -52,10 +53,18 @@ class Config:
     
     def load_from_env(self):
         """Load configuration from environment variables"""
+        # Load .env file
+        load_dotenv()
+        
         self.llm_config.api_key = os.getenv('LLM_API_KEY')
         self.llm_config.provider = os.getenv('LLM_PROVIDER', 'openai')
         self.llm_config.model = os.getenv('LLM_MODEL', 'gpt-3.5-turbo')
         self.llm_config.base_url = os.getenv('LLM_BASE_URL')
+        
+        # Debug: Print what was loaded (remove this after testing)
+        print(f"[DEBUG] Loaded provider: {self.llm_config.provider}")
+        print(f"[DEBUG] Loaded model: {self.llm_config.model}")
+        print(f"[DEBUG] API key loaded: {'Yes' if self.llm_config.api_key else 'No'}")
     
     def load_from_file(self, filepath: str):
         """Load configuration from JSON file"""
@@ -91,7 +100,7 @@ class Config:
                 'test_api_attack': self.test_config.test_api_attack,
                 'test_unlimited_prompt': self.test_config.test_unlimited_prompt,
                 'aggression_level': self.test_config.aggression_level,
-                'tests_per_category': self.test_config.test_per_category
+                'tests_per_category': self.test_config.tests_per_category
             }
         }
     
