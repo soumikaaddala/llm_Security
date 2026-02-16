@@ -54,8 +54,9 @@ class LLMClient:
             else:
                 response = self._call_custom(prompt, system_prompt, temperature)
             
-            response_time = time.time() - start_time
-            return response._replace(response_time=response_time)
+            # Update response time
+            response.response_time = time.time() - start_time
+            return response
             
         except Exception as e:
             return LLMResponse(
@@ -111,7 +112,7 @@ class LLMClient:
             text=result['choices'][0]['message']['content'],
             raw_response=result,
             tokens_used=result.get('usage', {}).get('total_tokens', 0),
-            response_time=0  # Will be set by caller
+            response_time=0.0
         )
     
     def _call_mistral(self, prompt: str, system_prompt: Optional[str],
@@ -168,7 +169,7 @@ class LLMClient:
             raw_response=result,
             tokens_used=result.get('usage', {}).get('input_tokens', 0) + 
                        result.get('usage', {}).get('output_tokens', 0),
-            response_time=0
+            response_time=0.0
         )
     
     def _call_custom(self, prompt: str, system_prompt: Optional[str],
@@ -200,5 +201,5 @@ class LLMClient:
             text=result.get('text', ''),
             raw_response=result,
             tokens_used=result.get('tokens', 0),
-            response_time=0
+            response_time=0.0
         )
