@@ -1,0 +1,10 @@
+*.pyc
+venv/
+.env
+*.log
+reports/*.html
+reports/*.pdf
+reports/*.json
+!reports/.gitkeep
+.vscode/settings.json
+.DS_Store
