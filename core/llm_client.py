@@ -36,6 +36,8 @@ class LLMClient:
                 self.base_url = 'https://api.openai.com/v1'
             elif self.provider == 'anthropic':
                 self.base_url = 'https://api.anthropic.com/v1'
+            elif self.provider == 'mistral':
+                self.base_url = 'https://api.mistral.ai/v1'
     
     def send_message(self, prompt: str, system_prompt: Optional[str] = None,
                      temperature: float = 0.7, image_url: Optional[str] = None) -> LLMResponse:
@@ -47,6 +49,8 @@ class LLMClient:
                 response = self._call_openai(prompt, system_prompt, temperature, image_url)
             elif self.provider == 'anthropic':
                 response = self._call_anthropic(prompt, system_prompt, temperature, image_url)
+            elif self.provider == 'mistral':
+                response = self._call_mistral(prompt, system_prompt, temperature, image_url)
             else:
                 response = self._call_custom(prompt, system_prompt, temperature)
             
@@ -109,6 +113,11 @@ class LLMClient:
             tokens_used=result.get('usage', {}).get('total_tokens', 0),
             response_time=0  # Will be set by caller
         )
+    
+    def _call_mistral(self, prompt: str, system_prompt: Optional[str],
+                      temperature: float, image_url: Optional[str]) -> LLMResponse:
+        """Call Mistral AI API (OpenAI-compatible)"""
+        return self._call_openai(prompt, system_prompt, temperature, image_url)
     
     def _call_anthropic(self, prompt: str, system_prompt: Optional[str],
                        temperature: float, image_url: Optional[str]) -> LLMResponse:
