@@ -8,8 +8,8 @@ from core.config import Config
 from core.llm_client import LLMClient
 from detectors.prompt_injection import PromptInjectionTester
 from detectors.image_injection import ImageInjectionTester
-
-
+from detectors.vector_attack import VectorAttackTester
+from detectors.api_attack import APIAttackTester
 def print_banner():
     """Print tool banner"""
     banner = """
@@ -225,12 +225,25 @@ def main():
         tester = PromptInjectionTester(llm_client, config)
         report = tester.run_tests(system_prompt=args.system_prompt)
         reports.append(report)
+    
+    if args.tests in ['api', 'all']:
+        print("\n" + "="*70)
+        tester = APIAttackTester(llm_client, config)
+        report = tester.run_tests(system_prompt=args.system_prompt)
+        reports.append(report)
 
     if args.tests in ['image', 'all']:
         print("\n" + "="*70)
         tester = ImageInjectionTester(llm_client, config)
         report = tester.run_tests(system_prompt=args.system_prompt)
         reports.append(report)
+
+    
+    if args.tests in ['vector', 'all']:
+       print("\n" + "="*70)
+       tester = VectorAttackTester(llm_client, config)
+       report = tester.run_tests(system_prompt=args.system_prompt)
+       reports.append(report)
     
     # Print detailed results if verbose or if vulnerabilities found
     total_vulns = sum(r.vulnerabilities_found for r in reports)
