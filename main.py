@@ -7,6 +7,7 @@ from datetime import datetime
 from core.config import Config
 from core.llm_client import LLMClient
 from detectors.prompt_injection import PromptInjectionTester
+from detectors.image_injection import ImageInjectionTester
 
 
 def print_banner():
@@ -219,10 +220,15 @@ def main():
     
     # Run tests
     reports = []
-    
     if args.tests in ['prompt', 'all']:
         print("\n" + "="*70)
         tester = PromptInjectionTester(llm_client, config)
+        report = tester.run_tests(system_prompt=args.system_prompt)
+        reports.append(report)
+
+    if args.tests in ['image', 'all']:
+        print("\n" + "="*70)
+        tester = ImageInjectionTester(llm_client, config)
         report = tester.run_tests(system_prompt=args.system_prompt)
         reports.append(report)
     
